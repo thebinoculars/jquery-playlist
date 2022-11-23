@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import 'jquery-ui/ui/widgets/slider'
 
-(function() {
+(function () {
   const playlist = JSON.parse(process.env.PLAYLIST)
 
   const volume = localStorage.getItem('volume') ? +localStorage.getItem('volume') : 0.5
@@ -16,25 +16,26 @@ import 'jquery-ui/ui/widgets/slider'
 
   const updateProgress = () => setProgress(audio.currentTime)
 
-  const play = function() {
+  const play = function () {
     audio.play()
     $('.playback').addClass('playing')
     timeout = setInterval(updateProgress, 500)
     isPlaying = true
+    document.title = playlist[currentTrack].title
     document.querySelector('li.playing').scrollIntoView({
       behavior: 'smooth',
       block: 'start',
     })
   }
 
-  const pause = function() {
+  const pause = function () {
     audio.pause()
     $('.playback').removeClass('playing')
     clearInterval(updateProgress)
     isPlaying = false
   }
 
-  const setProgress = function(value) {
+  const setProgress = function (value) {
     const currentSecond = format(value % 60)
     const currentMinute = format(value / 60)
     const trackSecond = format(audio.duration % 60)
@@ -46,7 +47,7 @@ import 'jquery-ui/ui/widgets/slider'
     $('.progress .slider a').css('left', ratio + '%')
   }
 
-  const setVolume = function(volume) {
+  const setVolume = function (volume) {
     audio.volume = volume
     localStorage.setItem('volume', volume)
     const volumePercent = `${volume * 100}%`
@@ -54,7 +55,7 @@ import 'jquery-ui/ui/widgets/slider'
     $('.volume .slider a').css('left', volumePercent)
   }
 
-  const switchTrack = function(i) {
+  const switchTrack = function (i) {
     currentTrack = i
 
     if (currentTrack < 0) {
@@ -72,7 +73,7 @@ import 'jquery-ui/ui/widgets/slider'
     }
   }
 
-  const shufflePlay = function() {
+  const shufflePlay = function () {
     const lastTrack = currentTrack
     do {
       currentTrack = new Date().getTime() % playlist.length
@@ -81,7 +82,7 @@ import 'jquery-ui/ui/widgets/slider'
     switchTrack(currentTrack)
   }
 
-  const ended = function() {
+  const ended = function () {
     pause()
     audio.currentTime = 0
     isPlaying = true
@@ -101,12 +102,12 @@ import 'jquery-ui/ui/widgets/slider'
     }
   }
 
-  const beforeLoad = function() {
+  const beforeLoad = function () {
     const endVal = this?.seekable?.length ? this.seekable.end(0) : 0
     $('.progress .loaded').css('width', (100 / (this.duration || 1) * endVal) + '%')
   }
 
-  const loadMusic = function() {
+  const loadMusic = function () {
     const item = playlist[currentTrack]
     $('.tag').html(`<h1>${item.title} - ${item.artist}</h1>`)
     $('#playlist li').removeClass('playing').eq(currentTrack).addClass('playing')
@@ -118,7 +119,7 @@ import 'jquery-ui/ui/widgets/slider'
     audio.addEventListener('ended', ended, false)
   }
 
-  const init = function() {
+  const init = function () {
     $('#playlist').html(playlist.map((item, index) => `<li data-index="${index}">${item.title} - ${item.artist}</li>`))
 
     if (shuffle) {
@@ -132,35 +133,35 @@ import 'jquery-ui/ui/widgets/slider'
     loadMusic()
   }
 
-  $('.playback').on('click', function() {
+  $('.playback').on('click', function () {
     $(this).hasClass('playing') ? pause() : play()
   })
 
-  $('.rewind').on('click', function() {
+  $('.rewind').on('click', function () {
     shuffle ? shufflePlay() : switchTrack(--currentTrack)
   })
 
-  $('.fastforward').on('click', function() {
+  $('.fastforward').on('click', function () {
     shuffle ? shufflePlay() : switchTrack(++currentTrack)
   })
 
-  $('#playlist').on('click', 'li', function() {
+  $('#playlist').on('click', 'li', function () {
     switchTrack($(this).data('index'))
   })
 
-  $('.repeat').on('click', function() {
+  $('.repeat').on('click', function () {
     repeat = !repeat
     $(this).toggleClass('enable')
     repeat ? localStorage.setItem('repeat', true) : localStorage.removeItem('repeat')
   })
 
-  $('.shuffle').on('click', function() {
+  $('.shuffle').on('click', function () {
     shuffle = !shuffle
     $(this).toggleClass('enable')
     shuffle ? localStorage.setItem('shuffle', true) : localStorage.removeItem('shuffle')
   })
 
-  $('.mute').on('click', function() {
+  $('.mute').on('click', function () {
     if ($(this).hasClass('enable')) {
       setVolume($(this).data('volume'))
       $(this).removeClass('enable')
@@ -173,12 +174,12 @@ import 'jquery-ui/ui/widgets/slider'
   $('.progress .slider')
     .slider({
       step: 0.1,
-      slide: function(event, ui) {
+      slide: function (event, ui) {
         setProgress(audio.duration * ui.value / 100)
         $(this).addClass('enable')
         clearInterval(timeout)
       },
-      stop: function(event, ui) {
+      stop: function (event, ui) {
         audio.currentTime = audio.duration * ui.value / 100
         $(this).removeClass('enable')
         timeout = setInterval(updateProgress, 500)
@@ -191,7 +192,7 @@ import 'jquery-ui/ui/widgets/slider'
       min: 0,
       step: 0.01,
       value: volume,
-      slide: function(event, ui) {
+      slide: function (event, ui) {
         setVolume(ui.value)
         $(this).addClass('enable')
         ui.value === 0 ? $('.mute').addClass('enable') : $('.mute').removeClass('enable')
