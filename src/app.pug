@@ -1,0 +1,32 @@
+doctype html
+head
+  title Jquery Playlist
+body
+  .page
+    .panel.panel-controls
+      #player
+        .ctrl.tracker
+          .tag
+            strong Title
+            span.artist Artist
+            span.album Album
+          .control
+            .left
+              .rewind.icon
+              .playback.icon
+              .fastforward.icon
+            .volume.right
+              .mute.icon.left
+              .slider.left
+                .pace
+          .progress
+            .slider.playdid
+              .loaded
+              .pace
+            .timer.left 00:00
+            .right
+              .repeat.icon
+              .shuffle.icon
+    .panel.panel-channel-list.available
+      .list
+        ul#playlist
